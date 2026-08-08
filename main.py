@@ -3,7 +3,6 @@ import sys
 import threading
 from pathlib import Path
 from PIL import Image
-import pillow_avif  # Critical for AVIF support
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 import tkinter as tk
@@ -44,7 +43,7 @@ class OSMC(ctk.CTk):
         self.label = ctk.CTkLabel(self, text="OSMC", font=("Helvetica", 28, "bold"))
         self.label.pack(pady=(20, 5))
         
-        self.sub_label = ctk.CTkLabel(self, text="Open Source Multi Converter", font=("Helvetica", 12))
+        self.sub_label = ctk.CTkLabel(self, text="Free Forever", font=("Helvetica", 12))
         self.sub_label.pack(pady=(0, 20))
 
         # Source Folder
