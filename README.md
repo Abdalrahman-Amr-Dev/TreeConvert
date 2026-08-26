@@ -101,9 +101,9 @@ No flattened output directory.
 ### Requirements
 
 * Python `3.11+`
-* [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter)
+* [Flask](https://flask.palletsprojects.com/)
+* [pywebview](https://pywebview.flowrl.com/)
 * [Pillow](https://python-pillow.org/)
-* `pillow-avif-plugin` or a compatible Pillow version with AVIF support
 
 ### Installation
 
@@ -181,9 +181,9 @@ Your images don't need to be uploaded to a server or processed through a third-p
 | Technology           | Purpose                      |
 | :------------------- | :--------------------------- |
 | 🐍 **Python**        | Core application             |
-| 🎨 **CustomTkinter** | Desktop GUI                  |
+| 🌐 **Flask**         | Web server backend           |
+| 🖥️ **pywebview**    | Native desktop window        |
 | 🖼️ **Pillow**       | Image processing             |
-| ⚡ **AVIF**           | Modern image compression     |
 | 📦 **PyInstaller**   | Standalone executable builds |
 
 ---
@@ -193,6 +193,9 @@ Your images don't need to be uploaded to a server or processed through a third-p
 ```text
 TreeConvert/
 ├── main.py
+├── app.py
+├── templates/
+│   └── index.html
 ├── main.spec
 ├── convert.ico
 ├── convert.png
@@ -201,8 +204,10 @@ TreeConvert/
 ```
 
 | File               | Description                                        |
-| :----------------- | :------------------------------------------------- |
-| `main.py`          | Application entry point, GUI, and conversion logic |
+| :----------------- | :------------------------------------------------─ |
+| `main.py`          | Application entry point, pywebview launcher         |
+| `app.py`           | Flask backend, API routes, and conversion logic     |
+| `templates/`       | HTML/CSS/JS frontend                               |
 | `main.spec`        | PyInstaller configuration                          |
 | `convert.ico`      | Windows application icon                           |
 | `convert.png`      | macOS/Linux application icon                       |
@@ -240,31 +245,34 @@ The build is configured as a **windowed application**, so no console window will
 ## 🧩 Architecture
 
 ```text
-                    ┌─────────────────┐
-                    │  Source Folder  │
-                    └────────┬────────┘
-                             │
-                             ▼
-                    ┌─────────────────┐
-                    │ Recursive Scan  │
-                    └────────┬────────┘
-                             │
-                             ▼
-              ┌───────────────────────────┐
-              │      Image Processing     │
-              │                           │
-              │  • Format Conversion      │
-              │  • Quality Control        │
-              │  • EXIF Metadata          │
-              │  • Transparency Handling  │
-              └─────────────┬─────────────┘
-                            │
-                            ▼
-                    ┌─────────────────┐
-                    │  Output Folder  │
-                    │                 │
-                    │ Same Structure  │
-                    └─────────────────┘
+┌──────────────────────────────────────────────────┐
+│                  pywebview                        │
+│          (Native Desktop Window)                  │
+│                                                  │
+│  ┌──────────────────────────────────────────┐    │
+│  │         HTML/CSS/JS Frontend             │    │
+│  │        templates/index.html              │    │
+│  └──────────────────┬───────────────────────┘    │
+│                     │ HTTP                       │
+│                     ▼                            │
+│  ┌──────────────────────────────────────────┐    │
+│  │            Flask Backend                 │    │
+│  │              app.py                      │    │
+│  │                                          │    │
+│  │  POST /api/convert   → Start conversion  │    │
+│  │  GET  /api/status    → Progress updates  │    │
+│  │  GET  /api/log       → Conversion log    │    │
+│  └──────────────────┬───────────────────────┘    │
+│                     │                            │
+│                     ▼                            │
+│  ┌──────────────────────────────────────────┐    │
+│  │         Pillow Image Processing          │    │
+│  │  • Format Conversion                     │    │
+│  │  • Quality Control                       │    │
+│  │  • EXIF Metadata                         │    │
+│  │  • Transparency Handling                 │    │
+│  └──────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────┘
 ```
 
 ---
