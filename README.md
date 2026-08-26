@@ -325,6 +325,6 @@ You are free to use, modify, and contribute to the project according to the term
 
 <br>
 
-Made with ❤️ using Python.
+Made with ❤️ By Abdalrahman_Amr using Python.
 
 </div>
