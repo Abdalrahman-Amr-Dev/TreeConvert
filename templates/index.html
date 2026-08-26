@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TreeConvert</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --color-primary-400: oklch(68% 0.22 15);
+    --color-primary-500: oklch(58% 0.20 15);
+    --color-primary-600: oklch(50% 0.20 15);
+    --color-primary-700: oklch(42% 0.18 15);
+
+    --color-neutral-50: oklch(97% 0.005 250);
+    --color-neutral-100: oklch(93% 0.008 250);
+    --color-neutral-200: oklch(87% 0.008 250);
+    --color-neutral-300: oklch(78% 0.010 250);
+    --color-neutral-400: oklch(65% 0.012 250);
+    --color-neutral-500: oklch(50% 0.012 250);
+    --color-neutral-600: oklch(38% 0.015 250);
+    --color-neutral-700: oklch(28% 0.018 250);
+    --color-neutral-800: oklch(20% 0.020 250);
+    --color-neutral-900: oklch(15% 0.022 250);
+    --color-neutral-950: oklch(12% 0.025 250);
+
+    --color-success-500: oklch(65% 0.17 145);
+    --color-error-500: oklch(58% 0.22 25);
+    --color-info-500: oklch(62% 0.18 250);
+
+    --bg: var(--color-neutral-900);
+    --surface: var(--color-neutral-800);
+    --surface-elevated: var(--color-neutral-700);
+    --input-bg: var(--color-neutral-950);
+    --border: var(--color-neutral-600);
+    --border-strong: var(--color-neutral-500);
+    --text: var(--color-neutral-50);
+    --text-dim: var(--color-neutral-400);
+    --text-muted: var(--color-neutral-500);
+    --accent: var(--color-primary-500);
+    --accent-hover: var(--color-primary-400);
+    --accent-active: var(--color-primary-600);
+    --success: var(--color-success-500);
+    --error: var(--color-error-500);
+
+    --space-3xs: 2px;
+    --space-2xs: 3px;
+    --space-xs: 4px;
+    --space-sm: 6px;
+    --space-md: 8px;
+    --space-lg: 12px;
+    --space-xl: 16px;
+    --space-2xl: 24px;
+    --space-3xl: 32px;
+    --space-4xl: 48px;
+
+    --text-2xs: 10px;
+    --text-xs: 11.66px;
+    --text-sm: 13.33px;
+    --text-base: 14px;
+    --text-lg: 16px;
+    --text-xl: 19.2px;
+
+    --leading-xs: 1.60;
+    --leading-sm: 1.50;
+    --leading-base: 1.50;
+    --leading-lg: 1.40;
+    --leading-xl: 1.35;
+
+    --radius-none: 0;
+    --radius-sm: 4px;
+    --radius-md: 6px;
+    --radius-lg: 8px;
+    --radius-xl: 12px;
+    --radius-full: 9999px;
+
+    --radius-input: var(--radius-md);
+    --radius-button: var(--radius-md);
+    --radius-card: var(--radius-lg);
+    --radius-badge: var(--radius-sm);
+
+    --shadow-none: none;
+    --shadow-xs:
+      0 1px 2px 0 rgb(0 0 0 / 0.20);
+    --shadow-sm:
+      0 1px 3px 0 rgb(0 0 0 / 0.24),
+      0 1px 2px -1px rgb(0 0 0 / 0.20);
+    --shadow-md:
+      0 4px 6px -1px rgb(0 0 0 / 0.28),
+      0 2px 4px -2px rgb(0 0 0 / 0.24);
+    --shadow-lg:
+      0 10px 15px -3px rgb(0 0 0 / 0.30),
+      0 4px 6px -4px rgb(0 0 0 / 0.24);
+
+    --focus-ring-color: var(--color-primary-400);
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+    --focus-ring: var(--focus-ring-width) solid var(--focus-ring-color);
+    --focus-ring-offset-shadow: 0 0 0 var(--focus-ring-offset) var(--bg);
+    --focus-ring-shadow: 0 0 0 calc(var(--focus-ring-offset) + var(--focus-ring-width)) var(--focus-ring-color);
+  }
+
+  *:focus { outline: none; }
+
+  *:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: var(--text-base);
+    line-height: var(--leading-base);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: var(--space-2xl);
+    -webkit-app-region: drag;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 560px;
+    -webkit-app-region: no-drag;
+  }
+
+  header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+
+  header h1 {
+    font-size: var(--text-xl);
+    line-height: var(--leading-xl);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+
+  header p {
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+    color: var(--text-dim);
+    margin-top: var(--space-xs);
+  }
+
+  .section {
+    margin-bottom: var(--space-lg);
+  }
+
+  .section-header {
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .field-group {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-xs);
+  }
+
+  .row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-lg);
+  }
+
+  .row + .row {
+    margin-top: var(--space-lg);
+  }
+
+  label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-dim);
+    min-width: 90px;
+    flex-shrink: 0;
+  }
+
+  input[type="text"], select {
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-input);
+    padding: var(--space-md) var(--space-lg);
+    color: var(--text);
+    font-size: var(--text-sm);
+    line-height: var(--leading-sm);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="text"]:hover, select:hover {
+    border-color: var(--border-strong);
+  }
+
+  input[type="text"]:focus-visible, select:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px oklch(58% 0.20 15 / 0.20);
+    outline: none;
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--text-muted);
+  }
+
+  select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23656578'%3E%3Cpath d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+  }
+
+  select option {
+    background: var(--surface);
+    color: var(--text);
+  }
+
+  .btn {
+    background: var(--surface-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-button);
+    padding: var(--space-md) var(--space-xl);
+    color: var(--text);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .btn:active {
+    background: var(--accent-active);
+    border-color: var(--accent-active);
+  }
+
+  .btn:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  .btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    font-size: var(--text-base);
+    padding: var(--space-lg) var(--space-xl);
+    width: 100%;
+    border-radius: var(--radius-button);
+  }
+
+  .btn-primary:hover:not(:disabled) {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .btn-primary:active:not(:disabled) {
+    background: var(--accent-active);
+    border-color: var(--accent-active);
+    box-shadow: none;
+  }
+
+  .format-quality {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .quality-display {
+    font-size: var(--text-sm);
+    color: var(--text-dim);
+    margin-bottom: var(--space-sm);
+    text-align: center;
+  }
+
+  .quality-display span {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: var(--text-lg);
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: var(--radius-full);
+    transition: background 0.15s;
+  }
+
+  input[type="range"]:hover {
+    background: var(--border-strong);
+  }
+
+  input[type="range"]:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: var(--space-md);
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--radius-full);
+    background: var(--accent);
+    cursor: pointer;
+    border: 2px solid var(--bg);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .progress-bar-bg {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-top: var(--space-md);
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent);
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease;
+  }
+
+  .progress-text {
+    font-size: var(--text-xs);
+    color: var(--text-dim);
+    text-align: right;
+    margin-top: var(--space-xs);
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: var(--space-3xs) var(--space-md);
+    border-radius: var(--radius-badge);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    margin-left: var(--space-sm);
+    letter-spacing: 0.3px;
+  }
+
+  .status-badge.idle {
+    background: var(--border);
+    color: var(--text-dim);
+  }
+
+  .status-badge.running {
+    background: var(--accent);
+    color: var(--color-neutral-950);
+  }
+
+  .status-badge.done {
+    background: var(--success);
+    color: var(--color-neutral-950);
+  }
+
+  .log-area {
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    height: 160px;
+    overflow-y: auto;
+    padding: var(--space-lg);
+    font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+    font-size: var(--text-xs);
+    line-height: 1.65;
+    color: var(--text-dim);
+  }
+
+  .log-area .log-success { color: var(--success); }
+  .log-area .log-error { color: var(--error); }
+  .log-area .log-info { color: var(--accent); }
+
+  .log-area::-webkit-scrollbar { width: var(--space-sm); }
+  .log-area::-webkit-scrollbar-track { background: transparent; }
+  .log-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: var(--radius-full); }
+
+  .validation-msg {
+    font-size: var(--text-xs);
+    color: var(--error);
+    margin-top: var(--space-md);
+    display: none;
+  }
+
+  .validation-msg.visible {
+    display: block;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>TreeConvert</h1>
+    <p>Batch image conversion</p>
+  </header>
+
+  <div class="section">
+    <div class="field-group">
+      <div class="row">
+        <label for="srcInput">Source</label>
+        <input type="text" id="srcInput" placeholder="Select source folder..." aria-label="Source folder path">
+        <button class="btn" onclick="document.getElementById('srcPicker').click()" aria-label="Browse for source folder">Browse</button>
+        <input type="file" id="srcPicker" webkitdirectory style="display:none" onchange="handleFolderPick(this,'src')" aria-label="Source folder picker">
+      </div>
+      <div class="row">
+        <label for="dstInput">Destination</label>
+        <input type="text" id="dstInput" placeholder="Select destination folder..." aria-label="Destination folder path">
+        <button class="btn" onclick="document.getElementById('dstPicker').click()" aria-label="Browse for destination folder">Browse</button>
+        <input type="file" id="dstPicker" webkitdirectory style="display:none" onchange="handleFolderPick(this,'dst')" aria-label="Destination folder picker">
+      </div>
+      <div class="validation-msg" id="folderError" role="alert">Select both source and destination folders.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="field-group">
+      <div class="format-quality">
+        <div>
+          <div class="section-header">Format</div>
+          <select id="formatSelect" aria-label="Output format">
+            <option value="AVIF">AVIF</option>
+            <option value="WebP">WebP</option>
+            <option value="JPEG">JPEG</option>
+            <option value="PNG">PNG</option>
+          </select>
+        </div>
+        <div>
+          <div class="quality-display">Quality: <span id="qualityVal">93</span></div>
+          <input type="range" id="qualitySlider" min="10" max="100" value="93"
+                 oninput="document.getElementById('qualityVal').textContent = this.value"
+                 aria-label="Quality setting">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="field-group">
+      <div class="row" style="justify-content: space-between;">
+        <span style="font-size: var(--text-sm); font-weight: 600;">
+          Progress
+          <span id="statusBadge" class="status-badge idle">Idle</span>
+        </span>
+        <span id="progressPct" style="font-size: var(--text-sm); color: var(--text-dim);">0%</span>
+      </div>
+      <div class="progress-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="Conversion progress" id="progressBar">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <div class="progress-text" id="progressText" aria-live="polite">Waiting...</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <button class="btn btn-primary" id="convertBtn" onclick="startConversion()">
+      Start Conversion
+    </button>
+  </div>
+
+  <div class="section">
+    <div class="section-header">Log</div>
+    <div class="log-area" id="logArea" role="log" aria-live="polite" aria-label="Conversion log">
+      <div style="color: var(--text-muted);">Ready to convert...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let polling = null;
+
+  function handleFolderPick(input, which) {
+    if (input.files.length > 0) {
+      const path = input.files[0].webkitRelativePath;
+      const folder = path.substring(0, path.lastIndexOf("/"));
+      document.getElementById(which === "src" ? "srcInput" : "dstInput").value = "/" + folder;
+      hideFolderError();
+    }
+    input.value = "";
+  }
+
+  function showFolderError() {
+    document.getElementById("folderError").classList.add("visible");
+  }
+
+  function hideFolderError() {
+    document.getElementById("folderError").classList.remove("visible");
+  }
+
+  async function startConversion() {
+    const src = document.getElementById("srcInput").value.trim();
+    const dst = document.getElementById("dstInput").value.trim();
+    const format = document.getElementById("formatSelect").value;
+    const quality = parseInt(document.getElementById("qualitySlider").value);
+
+    if (!src || !dst) {
+      showFolderError();
+      return;
+    }
+
+    hideFolderError();
+
+    const btn = document.getElementById("convertBtn");
+    btn.disabled = true;
+    btn.textContent = "Converting...";
+
+    setBadge("running");
+    clearLog();
+    addLog("Starting conversion...", "info");
+
+    try {
+      const resp = await fetch("/api/convert", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ src, dst, format, quality }),
+      });
+
+      const data = await resp.json();
+      if (!resp.ok) {
+        addLog("Error: " + (data.error || "Unknown error"), "error");
+        btn.disabled = false;
+        btn.textContent = "Start Conversion";
+        setBadge("idle");
+        return;
+      }
+
+      addLog("Conversion started!", "info");
+      startPolling();
+    } catch (e) {
+      addLog("Failed to connect to server: " + e.message, "error");
+      btn.disabled = false;
+      btn.textContent = "Start Conversion";
+      setBadge("idle");
+    }
+  }
+
+  function startPolling() {
+    if (polling) clearInterval(polling);
+    polling = setInterval(async () => {
+      try {
+        const [statusResp, logResp] = await Promise.all([
+          fetch("/api/status"),
+          fetch("/api/log"),
+        ]);
+        const status = await statusResp.json();
+        const logData = await logResp.json();
+
+        const pct = Math.round(status.progress * 100);
+        document.getElementById("progressFill").style.width = pct + "%";
+        document.getElementById("progressPct").textContent = pct + "%";
+        document.getElementById("progressBar").setAttribute("aria-valuenow", pct);
+        document.getElementById("progressText").textContent =
+          status.total > 0 ? `${status.current} / ${status.total} files` : "Processing...";
+
+        renderLog(logData.log);
+
+        if (status.done) {
+          clearInterval(polling);
+          polling = null;
+          document.getElementById("convertBtn").disabled = false;
+          document.getElementById("convertBtn").textContent = "Start Conversion";
+          setBadge("done");
+        }
+      } catch (e) {
+      }
+    }, 1000);
+  }
+
+  function setBadge(state) {
+    const badge = document.getElementById("statusBadge");
+    badge.className = "status-badge " + state;
+    badge.textContent = state === "running" ? "Running" : state === "done" ? "Done" : "Idle";
+  }
+
+  let renderedCount = 0;
+
+  function renderLog(lines) {
+    const area = document.getElementById("logArea");
+    if (lines.length === 0) return;
+
+    if (lines.length > renderedCount) {
+      for (let i = renderedCount; i < lines.length; i++) {
+        const div = document.createElement("div");
+        const line = lines[i];
+        if (line.startsWith("Success")) {
+          div.className = "log-success";
+        } else if (line.startsWith("Failed")) {
+          div.className = "log-error";
+        } else {
+          div.className = "log-info";
+        }
+        div.textContent = line;
+        area.appendChild(div);
+      }
+      renderedCount = lines.length;
+      area.scrollTop = area.scrollHeight;
+    }
+  }
+
+  function clearLog() {
+    const area = document.getElementById("logArea");
+    area.innerHTML = "";
+    renderedCount = 0;
+  }
+
+  function addLog(msg, type) {
+    const area = document.getElementById("logArea");
+    const div = document.createElement("div");
+    div.className = "log-" + (type || "info");
+    div.textContent = msg;
+    area.appendChild(div);
+    area.scrollTop = area.scrollHeight;
+  }
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !document.getElementById("convertBtn").disabled) {
+      startConversion();
+    }
+  });
+</script>
+
+</body>
+</html>
