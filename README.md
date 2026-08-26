@@ -1,67 +1,322 @@
-# OSMC - Media Converter
+# 🌳 TreeConvert
 
-A free, open-source desktop app for batch-converting images between formats. Built with Python and CustomTkinter, it converts entire folders (including subfolders) in one click.
+<div align="center">
 
-## Features
+**A fast, lightweight, open-source desktop image converter.**
 
-- Batch convert all images in a folder, recursively including subfolders
-- Output formats: **AVIF**, **WebP**, **JPEG**, PNG
-- Adjustable quality slider (10–100)
-- Preserves EXIF metadata
-- Handles transparency (RGBA) correctly when converting to JPEG/AVIF
-- Keeps folder structure in the output directory
-- Live progress bar and per-file log output
-- Windows, macOS, and Linux support
+Convert entire folders between **AVIF, WebP, JPEG, and PNG** while preserving your folder structure and image metadata.
 
-## Requirements
+<br>
 
-- Python 3.11+
-- [pillow-avif-plugin](https://pypi.org/project/pillow-avif-plugin/) (or Pillow 10.4+, which includes AVIF support built-in)
-- CustomTkinter
+[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge\&logo=python\&logoColor=white)](https://www.python.org/)
+[![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-555?style=for-the-badge)](#)
+[![Formats](https://img.shields.io/badge/Formats-AVIF%20%7C%20WebP%20%7C%20JPEG%20%7C%20PNG-6C63FF?style=for-the-badge)](#supported-formats)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Yes-success?style=for-the-badge)](#license)
 
-## Installation
+</div>
+
+---
+
+## 📖 About
+
+**TreeConvert** is a free and open-source desktop application for **batch image conversion**.
+
+Instead of converting images one by one, simply select a folder and TreeConvert will recursively process all supported images — including images inside nested directories.
+
+Your original folder structure is automatically recreated in the output directory.
+
+> **Select → Configure → Convert → Done.**
+
+---
+
+## ✨ Features
+
+* 📂 **Batch Conversion** — Convert entire folders in a single operation
+* 🌳 **Recursive Processing** — Automatically process nested subfolders
+* 🖼️ **Multiple Formats** — AVIF, WebP, JPEG, and PNG
+* 🎚️ **Quality Control** — Adjustable quality from `10` to `100`
+* 🧾 **EXIF Preservation** — Preserve image metadata when supported
+* 🔲 **Transparency Handling** — Properly handle RGBA images when converting to formats such as JPEG
+* 🗂️ **Structure Preservation** — Keep the original directory hierarchy
+* 📊 **Live Progress** — Monitor conversion progress in real time
+* 📝 **Per-file Logging** — See the status of every processed image
+* 💻 **Cross-platform** — Windows, macOS, and Linux
+
+---
+
+## 🖼️ Supported Formats
+
+|  Format  | Output | Transparency | Recommended For                  |
+| :------: | :----: | :----------: | :------------------------------- |
+| **AVIF** |    ✅   |       ✅      | Modern web & maximum compression |
+| **WebP** |    ✅   |       ✅      | Web images & general use         |
+| **JPEG** |    ✅   |       ❌      | Photos & compatibility           |
+|  **PNG** |    ✅   |       ✅      | Lossless images                  |
+
+---
+
+## 🌲 Directory Structure
+
+TreeConvert preserves your folder hierarchy during conversion.
+
+### Before
+
+```text
+photos/
+├── image-01.jpg
+├── image-02.png
+│
+├── vacation/
+│   ├── beach.jpg
+│   └── hotel.png
+│
+└── family/
+    └── photo.jpg
+```
+
+### After
+
+```text
+converted/
+├── image-01.webp
+├── image-02.webp
+│
+├── vacation/
+│   ├── beach.webp
+│   └── hotel.webp
+│
+└── family/
+    └── photo.webp
+```
+
+No manually recreating folders.
+No flattened output directory.
+
+**Your image library stays organized.**
+
+---
+
+## ⚡ Quick Start
+
+### Requirements
+
+* Python `3.11+`
+* [CustomTkinter](https://github.com/TomSchimansky/CustomTkinter)
+* [Pillow](https://python-pillow.org/)
+* `pillow-avif-plugin` or a compatible Pillow version with AVIF support
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/your-username/TreeConvert.git
+cd TreeConvert
+```
+
+Install dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## Usage
-
-Run the app:
+Run the application:
 
 ```bash
 python main.py
 ```
 
-1. Click **Browse** next to "Source Folder" and pick the folder containing your images.
-2. Click **Browse** next to "Save Folder" and pick where converted images should go.
-3. Choose an **Output Format** (AVIF, WebP, JPEG, or PNG).
-4. Adjust the **Quality** slider if needed.
-5. Click **Start Conversion**.
+---
 
-Converted images keep their relative folder structure under the destination folder.
+## 🚀 Usage
 
-## Building a Windows .exe
+### 1. Select the source folder
 
-Build a standalone single-file exe with PyInstaller:
+Click **Browse** next to `Source Folder` and select the folder containing your images.
+
+### 2. Select the destination
+
+Choose where TreeConvert should save the converted images using `Save Folder`.
+
+### 3. Choose the output format
+
+Select one of:
+
+```text
+AVIF
+WebP
+JPEG
+PNG
+```
+
+### 4. Adjust quality
+
+Use the quality slider to select a value between:
+
+```text
+10 ─────────────────────────────── 100
+Low                              High
+```
+
+### 5. Start conversion
+
+Click **Start Conversion** and let TreeConvert handle the rest.
+
+The application will recursively scan your source folder and preserve its directory structure in the destination.
+
+---
+
+## 🔐 Local & Private
+
+TreeConvert is designed as a **local desktop application**.
+
+Your images don't need to be uploaded to a server or processed through a third-party web service.
+
+> 🔒 **Your files stay on your machine.**
+
+---
+
+## 🛠️ Built With
+
+| Technology           | Purpose                      |
+| :------------------- | :--------------------------- |
+| 🐍 **Python**        | Core application             |
+| 🎨 **CustomTkinter** | Desktop GUI                  |
+| 🖼️ **Pillow**       | Image processing             |
+| ⚡ **AVIF**           | Modern image compression     |
+| 📦 **PyInstaller**   | Standalone executable builds |
+
+---
+
+## 📦 Project Structure
+
+```text
+TreeConvert/
+├── main.py
+├── main.spec
+├── convert.ico
+├── convert.png
+├── requirements.txt
+└── README.md
+```
+
+| File               | Description                                        |
+| :----------------- | :------------------------------------------------- |
+| `main.py`          | Application entry point, GUI, and conversion logic |
+| `main.spec`        | PyInstaller configuration                          |
+| `convert.ico`      | Windows application icon                           |
+| `convert.png`      | macOS/Linux application icon                       |
+| `requirements.txt` | Python dependencies                                |
+| `README.md`        | Project documentation                              |
+
+---
+
+## 🪟 Build for Windows
+
+TreeConvert can be packaged into a standalone `.exe` using [PyInstaller](https://pyinstaller.org/).
+
+Install PyInstaller:
 
 ```bash
-pip install pyinstaller customtkinter pillow pillow-avif-plugin
+pip install pyinstaller
+```
+
+Build the application:
+
+```bash
 pyinstaller --noconfirm main.spec
 ```
 
-The exe is produced at `dist/OSMC_Media_Converter.exe` (a windowed app — no console).
+The executable will be generated at:
 
-## Project Structure
-
-```
-OSMC-media-converter/
-├── main.py        # Application entry point (CustomTkinter GUI + conversion logic)
-├── main.spec      # PyInstaller build configuration
-├── convert.ico    # Windows app icon
-└── convert.png    # macOS/Linux app icon
+```text
+dist/TreeConvert.exe
 ```
 
-## License
+The build is configured as a **windowed application**, so no console window will appear when running the `.exe`.
 
-Free to use and modify. This is an open-source project.
+---
+
+## 🧩 Architecture
+
+```text
+                    ┌─────────────────┐
+                    │  Source Folder  │
+                    └────────┬────────┘
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │ Recursive Scan  │
+                    └────────┬────────┘
+                             │
+                             ▼
+              ┌───────────────────────────┐
+              │      Image Processing     │
+              │                           │
+              │  • Format Conversion      │
+              │  • Quality Control        │
+              │  • EXIF Metadata          │
+              │  • Transparency Handling  │
+              └─────────────┬─────────────┘
+                            │
+                            ▼
+                    ┌─────────────────┐
+                    │  Output Folder  │
+                    │                 │
+                    │ Same Structure  │
+                    └─────────────────┘
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+If you discover a bug, have a feature request, or want to improve TreeConvert:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test your changes
+5. Open a Pull Request
+
+For larger changes, opening an issue first is recommended.
+
+---
+
+## 🗺️ Roadmap
+
+Potential future improvements:
+
+* [ ] Drag & drop support
+* [ ] Image preview
+* [ ] More output formats
+* [ ] Parallel conversion
+* [ ] Conversion presets
+* [ ] Custom output naming
+* [ ] Dark/light theme customization
+* [ ] Conversion statistics
+* [ ] Cancel / pause conversion
+
+---
+
+## 📜 License
+
+TreeConvert is **free and open-source software**.
+
+You are free to use, modify, and contribute to the project according to the terms of the project's license.
+
+---
+
+<div align="center">
+
+## 🌳 TreeConvert
+
+**Batch image conversion, made simple.**
+
+<br>
+
+Made with ❤️ using Python.
+
+</div>
