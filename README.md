@@ -242,6 +242,38 @@ The build is configured as a **windowed application**, so no console window will
 
 ---
 
+## 🍎 Build for macOS
+
+Build on a Mac with Python 3.11 or newer:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt 'pyinstaller>=6.0'
+python -m PyInstaller --noconfirm macos.spec
+```
+
+Open `dist/TreeConvert.app` in Finder. You can copy it into Applications;
+the bundled app does not require Python to be installed. Browse uses native
+macOS folder dialogs, including for an empty destination folder.
+
+The build targets the architecture of the Python interpreter used to build it.
+Build separately with Apple Silicon Python for Apple Silicon and Intel Python
+for Intel Macs. This local build is ad-hoc signed; distribution to other users
+requires Developer ID signing and Apple notarization for normal Gatekeeper
+acceptance.
+
+To create a ZIP that preserves the app bundle:
+
+```bash
+ditto -c -k --sequesterRsrc --keepParent dist/TreeConvert.app dist/TreeConvert-macOS.zip
+```
+
+The macOS bundle follows [PyInstaller's app bundle configuration](https://pyinstaller.org/en/stable/spec-files.html#spec-file-options-for-a-macos-bundle)
+and uses [pywebview's native folder dialog API](https://pywebview.flowrl.com/api/).
+
+---
+
 ## 🧩 Architecture
 
 ```text
