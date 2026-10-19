@@ -444,14 +444,12 @@
       <div class="row">
         <label for="srcInput">Source</label>
         <input type="text" id="srcInput" placeholder="Select source folder..." aria-label="Source folder path">
-        <button class="btn" onclick="document.getElementById('srcPicker').click()" aria-label="Browse for source folder">Browse</button>
-        <input type="file" id="srcPicker" webkitdirectory style="display:none" onchange="handleFolderPick(this,'src')" aria-label="Source folder picker">
+        <button class="btn" onclick="chooseFolder('src')" aria-label="Browse for source folder">Browse</button>
       </div>
       <div class="row">
         <label for="dstInput">Destination</label>
         <input type="text" id="dstInput" placeholder="Select destination folder..." aria-label="Destination folder path">
-        <button class="btn" onclick="document.getElementById('dstPicker').click()" aria-label="Browse for destination folder">Browse</button>
-        <input type="file" id="dstPicker" webkitdirectory style="display:none" onchange="handleFolderPick(this,'dst')" aria-label="Destination folder picker">
+        <button class="btn" onclick="chooseFolder('dst')" aria-label="Browse for destination folder">Browse</button>
       </div>
       <div class="validation-msg" id="folderError" role="alert">Select both source and destination folders.</div>
     </div>
@@ -512,14 +510,19 @@
 <script>
   let polling = null;
 
-  function handleFolderPick(input, which) {
-    if (input.files.length > 0) {
-      const path = input.files[0].webkitRelativePath;
-      const folder = path.substring(0, path.lastIndexOf("/"));
-      document.getElementById(which === "src" ? "srcInput" : "dstInput").value = "/" + folder;
-      hideFolderError();
+  async function chooseFolder(which) {
+    try {
+      if (!window.pywebview || !window.pywebview.api) {
+        throw new Error('Open TreeConvert as a desktop app to browse folders, or enter the full folder path.');
+      }
+      const folder = await window.pywebview.api.choose_folder();
+      if (folder) {
+        document.getElementById(which === "src" ? "srcInput" : "dstInput").value = folder;
+        hideFolderError();
+      }
+    } catch (error) {
+      alert(error.message || 'Unable to open the folder picker. Enter the full folder path instead.');
     }
-    input.value = "";
   }
 
   function showFolderError() {
