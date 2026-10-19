@@ -1,12 +1,43 @@
 import os
+import stat
 import sys
 import threading
 import time
 from pathlib import Path
+from urllib.parse import unquote, urlsplit
 from flask import Flask, render_template, jsonify, request
 from PIL import Image
 
 app = Flask(__name__)
+
+
+def normalize_folder_path(value):
+    value = value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in ('"', "'"):
+        value = value[1:-1]
+    if value.startswith("file://"):
+        url = urlsplit(value)
+        if url.netloc not in ("", "localhost"):
+            raise ValueError("Please choose a folder on this computer using Browse.")
+        value = unquote(url.path)
+    path = Path(value).expanduser()
+    if not value or not path.is_absolute():
+        raise ValueError("Please select a folder using Browse or enter its full absolute path.")
+    return path
+
+
+def validate_folder(path, label):
+    try:
+        if not stat.S_ISDIR(path.stat().st_mode):
+            return f"{label} path is not a folder: {path}"
+    except PermissionError:
+        return (f"Cannot access {label.lower()} folder: {path}. "
+                "Choose it again using Browse and allow folder access in macOS System Settings > Privacy & Security > Files and Folders.")
+    except FileNotFoundError:
+        return f"{label} folder does not exist: {path}. Choose it again using Browse."
+    except OSError as error:
+        return f"Cannot access {label.lower()} folder: {path}: {error}"
+    return None
 
 # Shared state for conversion
 conversion_state = {
@@ -61,17 +92,20 @@ def api_convert():
     if not src or not dst:
         return jsonify({"error": "Please select both source and destination folders."}), 400
 
-    src_path = Path(src)
-    dst_path = Path(dst)
+    try:
+        src_path = normalize_folder_path(src)
+        dst_path = normalize_folder_path(dst)
+    except (ValueError, RuntimeError) as error:
+        return jsonify({"error": str(error)}), 400
 
-    if not src_path.exists():
-        return jsonify({"error": "Source folder does not exist."}), 400
-    if not dst_path.exists():
-        return jsonify({"error": "Destination folder does not exist."}), 400
+    for path, label in ((src_path, "Source"), (dst_path, "Destination")):
+        error = validate_folder(path, label)
+        if error:
+            return jsonify({"error": error}), 400
 
     thread = threading.Thread(
         target=run_conversion,
-        args=(src, dst, quality, selected_format),
+        args=(str(src_path), str(dst_path), quality, selected_format),
         daemon=True,
     )
     thread.start()
